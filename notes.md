@@ -2,7 +2,7 @@ Two parts:
 
 1. scrape ct gov webpages for vote data, format the data, put it in a public github repository
 
-  - determine how each representative voted (yay, nay, not present, ...?)
+   - determine how each representative voted (yay, nay, not present, ...?)
 
 2. given a user's email address and zip code, whenever a new item is available, send them an email showing them the data
 
