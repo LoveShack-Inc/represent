@@ -21,3 +21,18 @@ we can search for all bills ("All selected" under the "Choose One or More Sessio
 This seems to overload the site, and the page takes a few minutes to load, so maybe we should just limit our search to 2020.
 
 I imagine this is the page that gets updated every time a new bill gets voted on. 
+
+
+To-Do:
+
+Dalton
+-Populate CSV with all PDF data
+-Web crawl for each PDF
+-Populate CSV with each PDF
+-Create separate Github repo for dataset
+-Script that checks for new PDFs
+-Run script on chron job, push new changes to repo
+
+-Given a zip code, programmatically find representatives
+-Store user's email address and zip code in a database
+-Whenever a new bill is added, send an email to every address who's representative appears on the vote PDF
