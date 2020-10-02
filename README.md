@@ -14,6 +14,16 @@ pip install -r requirements.txt
 ```
 Right now, the bulk of the program is in main.py.
 
+# Data Source
+
+This is the bill tracking info for the Connecticut state legislature:
+
+https://www.cga.ct.gov/asp/CGABillInfo/CGABillInfoRequest.asp
+
+You can find all bills on record ("All selected" under the "Choose One or More Session Year(s)" dropdown) but this seems to overload the site, and the page takes a few minutes to load, so maybe we should just limit our search to 2020.
+
+I imagine this is the page that gets updated every time a new bill gets voted on.
+
 # To-Do
 - Web app front-end: should collect a user's email address and zip code
 - Back-end: find state representatives from zip code. Starting with just Connecticut, then we'll expand as necessary
