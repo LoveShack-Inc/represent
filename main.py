@@ -3,7 +3,7 @@ import re
 import pandas as pd
 import sys
 
-file = open('2020SV-00052-R00HB06004-SV.PDF', 'rb')
+file = open('./data/2020SV-00052-R00HB06004-SV.PDF', 'rb')
 
 fileReader = PyPDF2.PdfFileReader(file)
 
@@ -31,7 +31,7 @@ for i in range(len(reg_result)):
     t2 = "".join(re.findall(reg_2, reg_result[i][1])).strip()
     vote_list.append((t1, t2))
 
-csv_file = pd.read_csv('2020.csv')
+csv_file = pd.read_csv('./data/2020.csv')
 
 csv_file['year'] = 2020
 csv_file['date'] = date_list[0][1].replace('/', '_')
