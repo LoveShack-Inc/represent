@@ -10,8 +10,17 @@ This project uses a Python 3.7.x environment.
 
 In the command line, run
 ```terminal
-pip install -r requirements.txt
+python3 -m venv ./env
+source ./env/bin/activate
+pip3 install -e .
+
+# run the below to see run options
+repp --help
+
+# when you're done, exit the venv with
+deactive
 ```
+
 Right now, the bulk of the program is in main.py.
 
 # Data Source
