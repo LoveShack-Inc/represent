@@ -1,4 +1,4 @@
-# am-i-represented
+# Represent
 
 A project to bring greater awareness to state government representatives' voting activity. The end goal a mobile app that will send users push notifications such as "[Your representative] just voted YES on Bill [XXXX]. Tap for more info." The notification can then bring users to the app to read more about the bill, or they can swipe it away if they don't need more information. The first iteration of the project will likely be an email list instead of a mobile app as a proof-of-concept.
 
