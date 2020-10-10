@@ -17,9 +17,9 @@ setuptools.setup(
         "requests",
         "PyPDF2",
         "certifi",
-        "pandas"
+        "beautifulsoup4"
     ],
     entry_points = {
-        'console_scripts': ['repp=rep.main:main'],
+        'console_scripts': ['repp=rep.main:main', 'crawl=rep.crawlers.CtGovCrawler.main'],
     }
 )
