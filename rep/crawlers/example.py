@@ -30,7 +30,7 @@ def _ct_gov_search(year):
         data=data, 
         headers=headers, 
         verify=False,
-        timeout=30
+        timeout=60
     )
     response.raise_for_status()
     return response
@@ -64,9 +64,11 @@ def _get_bill_pdf_links(relative_link):
     return_links = [i for i in hrefs if i.lower().endswith("pdf")]
     logging.info(f"Got {len(return_links)} from {relative_link}")
 
+    return return_links
+
 
 def get_relative_bill_links():
-    start_year = 2011
+    start_year = 2020
     end_year = 2020
 
     bills_relative_links = set()
@@ -82,13 +84,17 @@ def get_relative_bill_links():
 
 
 if __name__ == '__main__':
-    pdf_links = []
+    pdf_links = set()
     relative_links = get_relative_bill_links()
     for i in relative_links:
         logging.info(i)
     for num, i in enumerate(relative_links):
         logger.info(f"{num}/{len(relative_links)} - Getting PDF links from: {i}")
         try:
-            pdf_links.append(_get_bill_pdf_links(i))
+            single_bill_pdf_links = _get_bill_pdf_links(i)
+            pdf_links.update(single_bill_pdf_links)
         except Exception as e: # idk what the requests exception is
             logging.exception("An exception ocurred when getting the pdf links")
+
+    # This takes somewhere in the neighborhood of ten minutes to run for a single year.
+    # It returns a set 'pdf_links' of unique PDF links that we'll need to pass to the parser.
