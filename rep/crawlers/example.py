@@ -92,6 +92,7 @@ if __name__ == '__main__':
         logger.info(f"{num}/{len(relative_links)} - Getting PDF links from: {i}")
         try:
             single_bill_pdf_links = _get_bill_pdf_links(i)
+            single_bill_pdf_links = [CT_GOV_BASE_URI + i for i in single_bill_pdf_links]
             pdf_links.update(single_bill_pdf_links)
         except Exception as e: # idk what the requests exception is
             logging.exception("An exception ocurred when getting the pdf links")
