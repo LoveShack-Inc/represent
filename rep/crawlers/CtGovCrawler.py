@@ -72,7 +72,7 @@ class CtGovCrawler(BaseCrawler):
         return hrefs
 
     def get_relative_bill_links(self):
-        start_year = 2020
+        start_year = 2011
         end_year = 2020
 
         bills_relative_links = set()
