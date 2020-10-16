@@ -18,7 +18,7 @@ pip3 install -e .
 repp --help
 
 # when you're done, exit the venv with
-deactive
+deactivate
 ```
 
 Right now, the bulk of the program is in main.py.
