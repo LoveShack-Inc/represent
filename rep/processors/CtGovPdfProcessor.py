@@ -4,6 +4,7 @@ import re
 import sys
 import logging
 
+from .Exceptions import PdfProcessorException
 from .BaseProcessor import BaseProcessor
 
 class CtGovPdfProcessor(BaseProcessor):
@@ -16,6 +17,12 @@ class CtGovPdfProcessor(BaseProcessor):
         self.UNKOWN_PATTERN = r"[a-zA-Z .]"
 
     def process_blob(self, blob):
+        try: 
+            self._process_blob_wrapper(blob)
+        except Exception:
+            raise PdfProcessorException("Unable to process pdf")
+    
+    def _process_blob_wrapper(self, blob):
         page_content = self._get_page_from_blob(blob)
 
         votes = re.findall(self.YAY_OR_NAY_PATTERN, page_content)
@@ -47,7 +54,7 @@ class CtGovPdfProcessor(BaseProcessor):
 
 
     def _write_to_csv(self, year, date, bill_number, vote_name, rep_name, rep_vote):
-        for num, val in enumerate(rep_vote):
+        for num, _ in enumerate(rep_vote):
             logging.info(f"""
                 Year: {year}, Date: {date}, Bill Number: {bill_number}, Vote Name: {vote_name}
                 Rep Name: {rep_name[num]}, Rep Vote: {rep_vote[num]}""")

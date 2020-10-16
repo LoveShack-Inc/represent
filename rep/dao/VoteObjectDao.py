@@ -22,7 +22,6 @@ class VoteObjectDao(BaseDao):
             (?, ?, 1, 1);
         ''', (blob, url))
         self.conn.commit()
-        self.conn.close()
 
     def getUnprocessed(self):
         c = self.conn.cursor()

@@ -1,0 +1,2 @@
+class PdfProcessorException(Exception):
+    pass
