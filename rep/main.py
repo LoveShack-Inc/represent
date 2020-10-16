@@ -8,6 +8,7 @@ from rep.db.db import SqliteConnector
 from rep.dao.VoteObjectDao import VoteObjectDao
 from rep.crawlers import get_crawlers
 from rep.processors import get_processor_map
+from rep.processors.Exceptions import PdfProcessorException
 
 SLEEP_MINUTES = 60
 SLEEP_TIME = 60 * SLEEP_MINUTES
@@ -85,4 +86,8 @@ def _run_processors():
         except AttributeError as e:
             logging.exception(
                 f"Skipping record. No processor exists for [format={i.sourceFormat}, type={i.sourceType}, url={i.sourceUrl}]"
+            )
+        except PdfProcessorException as e:
+            logging.exception(
+                f"Skipping record. We failed to process the PDF [format={i.sourceFormat}, type={i.sourceType}, url={i.sourceUrl}]"
             )

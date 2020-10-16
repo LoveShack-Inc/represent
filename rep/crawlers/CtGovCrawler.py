@@ -4,6 +4,9 @@ from .BaseCrawler import BaseCrawler
 from rep.dao.VoteObjectDao import VoteObjectDao
 from bs4 import BeautifulSoup
 
+# TODO: fix the ssl errors eventually, for now though, the warning logs are a PITA
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 class CtGovCrawler(BaseCrawler):
     def __init__(self):
@@ -14,14 +17,21 @@ class CtGovCrawler(BaseCrawler):
         self.CT_GOV_STATUS = "/asp/cgabillstatus/cgabillstatus.asp"
         self.CT_GOV_SEARCH = "/asp/CGABillInfo/CGABillInfoDisplay.asp"
         self.CT_GOV_SEARCH_BASE_URI = f"{self.CT_GOV_BASE_URI}{self.CT_GOV_SEARCH}"
-        logging.basicConfig(level=logging.INFO)
-        self.logger = logging.getLogger("crawler")
 
     def crawl(self):
         logging.info("CtGovCrawler crawl")
         vote_object_urls = self._get_vote_object_download_urls()
-        for i in vote_object_urls:
-            vote_object = self._download_vote_object(i)
+        logging.info(f"Got {len(vote_object_urls)} to ingest")
+        for num, i in enumerate(vote_object_urls):
+            if self.voteObjectDao.isUrlIngested(i):
+                logging.info(f"Skipping request for already ingested url {i}")
+                continue
+            try:
+                logging.info(f"Get pdf {num}/{len(vote_object_urls)}")
+                vote_object = self._download_vote_object(i)
+            except requests.exceptions.HttpError as e:
+                logging.exception("HTTPError caught when making request to resource server")
+                continue
             self.voteObjectDao.write(vote_object, i)
 
     def _ct_gov_search(self, year):
@@ -67,7 +77,7 @@ class CtGovCrawler(BaseCrawler):
 
         bills_relative_links = set()
         for i in range(start_year, end_year + 1):
-            self.logger.info(f"Searching for bills in year: {i}")
+            logging.info(f"Searching for bills in year: {i}")
             r = self._ct_gov_search(i)
             soup = self._get_soup_from_response(r)
             bills_relative_links.update(
@@ -77,7 +87,7 @@ class CtGovCrawler(BaseCrawler):
         return bills_relative_links
 
     def _get_bill_pdf_links(self, relative_link):
-        self.logger.info(f"Getting {relative_link}")
+        logging.info(f"Getting {relative_link}")
         response = requests.request(
             "GET",
             f"{self.CT_GOV_BASE_URI}{relative_link}",
@@ -95,10 +105,8 @@ class CtGovCrawler(BaseCrawler):
     def _get_vote_object_download_urls(self):
         pdf_links = set()
         relative_links = self.get_relative_bill_links()
-        for i in relative_links:
-            logging.info(i)
         for num, i in enumerate(relative_links):
-            self.logger.info(f"{num}/{len(relative_links)} - Getting PDF links from: {i}")
+            logging.info(f"{num}/{len(relative_links)} - Getting PDF links from: {i}")
             try:
                 single_bill_pdf_links = self._get_bill_pdf_links(i)
                 single_bill_pdf_links = [self.CT_GOV_BASE_URI + i for i in single_bill_pdf_links]
@@ -114,5 +122,12 @@ class CtGovCrawler(BaseCrawler):
             # FIXME: I get a cert error locally idk why, it's annoying
             verify=False
         )
-        req.raise_for_status()
-        return req.content
+        
+        requestBlob = None
+        if req.ok:
+            requestBlob = req.content
+        elif req.status_code == 404:
+            logging.error(f"The resource server returned a 404 for the resouce:\n\t{url}")
+        else:
+            req.raise_for_status()
+        return requestBlob
