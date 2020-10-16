@@ -10,7 +10,7 @@ setuptools.setup(
     description="Are you represented?",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/dalton-b/am-i-represented",
+    url="https://github.com/LoveShack-Inc/represent",
     packages=setuptools.find_packages(),
     python_requires='>=3.7',
     install_requires=[
