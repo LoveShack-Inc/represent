@@ -3,8 +3,6 @@ import logging
 import time
 import sys
 
-from rep.utils.logger import configure_logging
-from rep.db.db import SqliteConnector
 from rep.dao.VoteObjectDao import VoteObjectDao
 from rep.crawlers import get_crawlers
 from rep.processors import get_processor_map
@@ -17,14 +15,8 @@ PARSERS = get_processor_map()
 voteObjectsDao = VoteObjectDao()
 
 def main():
-    configure_logging()
-
     logging.info("Parsing args")
     args = _parse_args()
-
-    logging.info("Initializing database")
-    _init_db()
-
     if args.forever:
         while True:
             logging.info("Running on loop")
@@ -51,11 +43,6 @@ def _parse_args():
 
     return parser.parse_args()
 
-
-def _init_db():
-    sqliteConnector = SqliteConnector()
-    sqliteConnector.create_db()
-    sqliteConnector.run_migrations()
 
 
 def _choose_run_strategy(args):

@@ -23,6 +23,22 @@ deactivate
 
 Right now, the bulk of the program is in main.py.
 
+# Local Development
+
+The app can be run in a couple of different modes
+
+```terminal
+# run the crawler
+repp --crawl
+
+# run the parser
+repp --processor
+
+# run the web service
+# runs on localhost:8080 by default
+repp-serve
+```
+
 # Data Source
 
 This is the bill tracking info for the Connecticut state legislature:
