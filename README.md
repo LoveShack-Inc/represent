@@ -48,3 +48,10 @@ https://www.cga.ct.gov/asp/CGABillInfo/CGABillInfoRequest.asp
 You can find all bills on record ("All selected" under the "Choose One or More Session Year(s)" dropdown) but this seems to overload the site, and the page takes a few minutes to load, so maybe we should just limit our search to 2020.
 
 I imagine this is the page that gets updated every time a new bill gets voted on.
+
+## Docker
+
+```
+docker build . -t repp
+docker run repp --process
+```

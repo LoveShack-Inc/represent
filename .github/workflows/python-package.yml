@@ -24,6 +24,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install pytest
         pip install -e .
+    - name: Test docker build
+      run: |
+        docker build .
     - name: Test with pytest
       run: |
         pytest
