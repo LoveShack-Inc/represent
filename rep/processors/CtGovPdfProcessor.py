@@ -14,7 +14,7 @@ class CtGovPdfProcessor(BaseProcessor):
     def __init__(self):
         super().__init__()
 
-        self.YAY_OR_NAY_PATTERN = re.compile(r"( Y | N )(.*?)(?= Y | N | \n)")
+        self.YAY_OR_NAY_PATTERN = re.compile(r"( Y | N | A )(.*?)(?= Y | N | A | \n)")
         self.DATE_PATTERN = r"(Taken on )(.*?)( )"
         self.VOTE_FOR_PATTERN = r"(Vote for )(.*?)( Seq)"
         self.UNKOWN_PATTERN = r"[a-zA-Z .]"
@@ -33,26 +33,28 @@ class CtGovPdfProcessor(BaseProcessor):
         num_list = re.findall(self.VOTE_FOR_PATTERN, page_content)
         year = source_url.split('/')[3]
 
+        # Length of the vote list and/or num_list will be 0 (or 1) if the PDF isn't a vote file that we know
+        # how to read
+        if len(votes) <= 0 or len(num_list) <= 0:
+            logging.error('PDF file is not one of the understood formats')
+            return None
 
         vote_list = []
         for i in range(len(votes)):
             rep_vote = votes[i][0]
             rep_name = "".join(re.findall(self.UNKOWN_PATTERN, votes[i][1])).strip()
-            vote_list.append((rep_vote, rep_name))
+            # I'm bad at regexes so sometimes this extra line gets sucked up
+            # So we have to make sure we don't add items that have it
+            if "The following" not in rep_name:
+                vote_list.append((rep_vote, rep_name))
 
-        # Length of the vote list and/or num_list will be 0 if the PDF isn't a vote file that we know
-        # how to read
-        if len(vote_list) <= 0 or len(num_list) <= 0:
-            logging.error('PDF file is not one of the understood formats')
-            return None
-        else:
-            unix_time = self._get_unix_time(year, date_list[0][1])
-            return (unix_time,
-                    num_list[0][1],
-                    "foo",
-                    [x[1] for x in vote_list],
-                    [x[0] for x in vote_list]
-                    )
+        unix_time = self._get_unix_time(year, date_list[0][1])
+        return (unix_time,
+                num_list[0][1],
+                "foo",
+                [x[1] for x in vote_list],
+                [x[0] for x in vote_list]
+                )
 
     def _get_page_from_blob(self, blob):
         fileReader = PyPDF2.PdfFileReader(io.BytesIO(blob))
