@@ -35,6 +35,15 @@ class SqliteConnector:
                 FOREIGN KEY (sourceType) REFERENCES raw_vote_object_source_type(type), 
                 FOREIGN KEY (format) REFERENCES raw_vote_object_format(format)
             );
+            
+        CREATE TABLE IF NOT EXISTS processed_vote_result
+            (
+                unixTime INTEGER NOT NULL,
+                billNumber VARCHAR NOT NULL,
+                voteName VARCHAR NOT NULL,
+                repName VARCHAR NOT NULL,
+                repVote VARCHAR NOT NULL
+            )
         ''')
 
         conn.commit()

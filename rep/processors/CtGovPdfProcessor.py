@@ -3,9 +3,12 @@ import PyPDF2
 import re
 import sys
 import logging
+import datetime
+import time
 
 from .Exceptions import PdfProcessorException
 from .BaseProcessor import BaseProcessor
+
 
 class CtGovPdfProcessor(BaseProcessor):
     def __init__(self):
@@ -16,34 +19,40 @@ class CtGovPdfProcessor(BaseProcessor):
         self.VOTE_FOR_PATTERN = r"(Vote for )(.*?)( Seq)"
         self.UNKOWN_PATTERN = r"[a-zA-Z .]"
 
-    def process_blob(self, blob):
+    def process_blob(self, blob, source_url):
         try: 
-            self._process_blob_wrapper(blob)
-        except Exception:
-            raise PdfProcessorException("Unable to process pdf")
+            return self._process_blob_wrapper(blob, source_url)
+        except Exception as e:
+            raise PdfProcessorException("An exception occurred while processing a  file")
     
-    def _process_blob_wrapper(self, blob):
+    def _process_blob_wrapper(self, blob, source_url):
         page_content = self._get_page_from_blob(blob)
 
         votes = re.findall(self.YAY_OR_NAY_PATTERN, page_content)
         date_list = re.findall(self.DATE_PATTERN, page_content)
         num_list = re.findall(self.VOTE_FOR_PATTERN, page_content)
+        year = source_url.split('/')[3]
+
 
         vote_list = []
         for i in range(len(votes)):
-            t1 = votes[i][0]
-            t2 = "".join(re.findall(self.UNKOWN_PATTERN, votes[i][1])).strip()
-            vote_list.append((t1, t2))
+            rep_vote = votes[i][0]
+            rep_name = "".join(re.findall(self.UNKOWN_PATTERN, votes[i][1])).strip()
+            vote_list.append((rep_vote, rep_name))
 
-        self._write_to_csv(
-            2020, 
-            date_list[0][1].replace("/", "_"),
-            num_list[0][1],
-            "foo",
-            [x[1] for x in vote_list],
-            [x[0] for x in vote_list]
-        )
-
+        # Length of the vote list and/or num_list will be 0 if the PDF isn't a vote file that we know
+        # how to read
+        if len(vote_list) <= 0 or len(num_list) <= 0:
+            logging.error('PDF file is not one of the understood formats')
+            return None
+        else:
+            unix_time = self._get_unix_time(year, date_list[0][1])
+            return (unix_time,
+                    num_list[0][1],
+                    "foo",
+                    [x[1] for x in vote_list],
+                    [x[0] for x in vote_list]
+                    )
 
     def _get_page_from_blob(self, blob):
         fileReader = PyPDF2.PdfFileReader(io.BytesIO(blob))
@@ -52,9 +61,9 @@ class CtGovPdfProcessor(BaseProcessor):
         page_content += '\n'
         return page_content
 
+    def _get_unix_time(self, year, date):
+        dt = datetime.datetime(int(year), int(date.split('/')[0]), int(date.split('/')[1]))
+        unix_time = time.mktime(dt.timetuple())
+        return unix_time
 
-    def _write_to_csv(self, year, date, bill_number, vote_name, rep_name, rep_vote):
-        for num, _ in enumerate(rep_vote):
-            logging.info(f"""
-                Year: {year}, Date: {date}, Bill Number: {bill_number}, Vote Name: {vote_name}
-                Rep Name: {rep_name[num]}, Rep Vote: {rep_vote[num]}""")
+

@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from rep.dao.BaseDao import BaseDao
 from rep.dataclasses.VoteObject import VoteObject
-
 import logging
 
 class VoteObjectDao(BaseDao):
@@ -90,7 +89,6 @@ class VoteObjectDao(BaseDao):
         ''')
 
         return [self._map_row_to_vote_object(i) for i in rows]
-
 
     def isUrlIngested(self, url):
         c = self.conn.cursor()

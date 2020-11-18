@@ -2,17 +2,23 @@ import argparse
 import logging
 import time
 import sys
+import os
 
 from rep.dao.VoteObjectDao import VoteObjectDao
 from rep.crawlers import get_crawlers
 from rep.processors import get_processor_map
 from rep.processors.Exceptions import PdfProcessorException
+from rep.dao.ProcessedVoteRecordDao import ProcessedVoteRecordDao
 
 SLEEP_MINUTES = 60
 SLEEP_TIME = 60 * SLEEP_MINUTES
 PARSERS = get_processor_map()
 
 voteObjectsDao = VoteObjectDao()
+
+if os.getenv("ENV", "prod") == "local":
+    time.sleep(10)
+
 
 def main():
     logging.info("Parsing args")
@@ -64,12 +70,21 @@ def _run_crawlers():
         except Exception as e:
             logging.exception("An exception occurred during crawler execution")
 
+
 def _run_processors():
     unprocessed_objects = voteObjectsDao.getUnprocessed()
     for i in unprocessed_objects:
         try:
             parser = PARSERS[f"{i.sourceFormat}&&{i.sourceType}"]
-            parser.process_blob(i.blob)
+            parsed_vote = parser.process_blob(i.blob, i.sourceUrl)
+            if parsed_vote is not None:
+                processed_vote_record_dao = ProcessedVoteRecordDao()
+                processed_vote_record_dao.write(*parsed_vote)
+                processed_vote_record_dao.mark_processed(i.sourceUrl)
+                logging.info('Successfully processed the following file: ' + i.sourceUrl)
+            else:
+                processed_vote_record_dao = ProcessedVoteRecordDao()
+                processed_vote_record_dao.mark_processed(i.sourceUrl)
         except AttributeError as e:
             logging.exception(
                 f"Skipping record. No processor exists for [format={i.sourceFormat}, type={i.sourceType}, url={i.sourceUrl}]"
