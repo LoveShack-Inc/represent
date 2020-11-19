@@ -14,12 +14,9 @@ class CtGovPdfProcessor(BaseProcessor):
     def __init__(self):
         super().__init__()
 
-        # Alex's better regex, it just needs to ignore periods so it doesn't stop at people's middle initials
-        # (Y|N|A)\W+\d+\W+(\w+\W\w+)
-        self.YAY_OR_NAY_PATTERN = re.compile(r"( Y | N | A )(.*?)(?= Y | N | A | \n)")
+        self.YAY_OR_NAY_PATTERN = re.compile(r"(Y|N|A)\W+\d+\W+(\w+)\W+((\w)\.)?\W?(\w+)")
         self.DATE_PATTERN = r"(Taken on )(.*?)( )"
         self.VOTE_FOR_PATTERN = r"(Vote for )(.*?)( Seq)"
-        self.UNKNOWN_PATTERN = r"[a-zA-Z .]"
 
     def process_blob(self, blob, source_url):
         try: 
@@ -44,11 +41,8 @@ class CtGovPdfProcessor(BaseProcessor):
         vote_list = []
         for i in range(len(votes)):
             rep_vote = votes[i][0]
-            rep_name = "".join(re.findall(self.UNKNOWN_PATTERN, votes[i][1])).strip()
-            # I'm bad at regexes so sometimes this extra line gets sucked up
-            # So we have to make sure we don't add items that have it
-            if "The following" not in rep_name:
-                vote_list.append((rep_vote, rep_name))
+            rep_name = ' '.join([i for i in [votes[i][1], votes[i][3], votes[i][4]] if i])
+            vote_list.append((rep_vote, rep_name))
 
         unix_time = self._get_unix_time(year, date_list[0][1])
         # TODO: Give votes a proper title
