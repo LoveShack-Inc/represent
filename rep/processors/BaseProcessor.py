@@ -1,6 +1,4 @@
 from abc import ABC, abstractmethod
-import sqlite3
-
 
 class BaseProcessor(ABC):
 

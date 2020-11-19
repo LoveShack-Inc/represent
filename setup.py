@@ -18,7 +18,8 @@ setuptools.setup(
         "PyPDF2",
         "certifi",
         "beautifulsoup4",
-        "cherrypy"
+        "cherrypy",
+        "pytest"
     ],
     entry_points = {
         'console_scripts': [

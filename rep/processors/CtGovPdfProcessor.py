@@ -35,8 +35,7 @@ class CtGovPdfProcessor(BaseProcessor):
         # Length of the vote list and/or num_list will be 0 (or 1) if the PDF isn't a vote file that we know
         # how to read
         if len(votes) <= 1 or len(num_list) <= 0:
-            logging.error('PDF file is not one of the understood formats')
-            return None
+            raise PdfProcessorException("PDF file can't be read")
 
         vote_list = []
         for i in range(len(votes)):
