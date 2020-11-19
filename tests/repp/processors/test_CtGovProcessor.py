@@ -58,7 +58,7 @@ def test_itShouldProcessAPDFBlob():
     )
 
     # idk, but I don't care enough to debug this
-    assert abs(actual[0] - 1595995200.0) < 20000 == True
+    assert abs(actual[0] - 1595995200.0) < 20000
     assert actual[1] == 'HB-6004'
     assert actual[2] == 'foo'
 
