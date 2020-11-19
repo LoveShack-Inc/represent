@@ -14,10 +14,12 @@ class CtGovPdfProcessor(BaseProcessor):
     def __init__(self):
         super().__init__()
 
+        # Alex's better regex, it just needs to ignore periods so it doesn't stop at people's middle initials
+        # (Y|N|A)\W+\d+\W+(\w+\W\w+)
         self.YAY_OR_NAY_PATTERN = re.compile(r"( Y | N | A )(.*?)(?= Y | N | A | \n)")
         self.DATE_PATTERN = r"(Taken on )(.*?)( )"
         self.VOTE_FOR_PATTERN = r"(Vote for )(.*?)( Seq)"
-        self.UNKOWN_PATTERN = r"[a-zA-Z .]"
+        self.UNKNOWN_PATTERN = r"[a-zA-Z .]"
 
     def process_blob(self, blob, source_url):
         try: 
@@ -35,20 +37,21 @@ class CtGovPdfProcessor(BaseProcessor):
 
         # Length of the vote list and/or num_list will be 0 (or 1) if the PDF isn't a vote file that we know
         # how to read
-        if len(votes) <= 0 or len(num_list) <= 0:
+        if len(votes) <= 1 or len(num_list) <= 0:
             logging.error('PDF file is not one of the understood formats')
             return None
 
         vote_list = []
         for i in range(len(votes)):
             rep_vote = votes[i][0]
-            rep_name = "".join(re.findall(self.UNKOWN_PATTERN, votes[i][1])).strip()
+            rep_name = "".join(re.findall(self.UNKNOWN_PATTERN, votes[i][1])).strip()
             # I'm bad at regexes so sometimes this extra line gets sucked up
             # So we have to make sure we don't add items that have it
             if "The following" not in rep_name:
                 vote_list.append((rep_vote, rep_name))
 
         unix_time = self._get_unix_time(year, date_list[0][1])
+        # TODO: Give votes a proper title
         return (unix_time,
                 num_list[0][1],
                 "foo",
