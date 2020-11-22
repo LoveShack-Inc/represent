@@ -30,3 +30,9 @@ jobs:
     - name: Test with pytest
       run: |
         pytest
+    - name: UI Build
+      # I guess we could install node on the build machine, but that seems 
+      # like too much effort, so we'll just test the ui build in docker instead
+      run: |
+        cd ./ui
+        docker build .
