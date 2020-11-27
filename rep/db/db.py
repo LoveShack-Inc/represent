@@ -1,10 +1,12 @@
 import sqlite3
 import logging
+from os import getenv
+from rep.db import sqlite_get_connection_helper
 
 class SqliteConnector:
     @classmethod
     def get_conn(self):
-        return sqlite3.connect('./database/db.sqlite')
+        return sqlite_get_connection_helper()
 
     def create_db(self):
         conn = SqliteConnector.get_conn()

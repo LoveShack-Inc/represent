@@ -62,7 +62,7 @@ class VoteObjectDao(BaseDao):
         return [self._map_row_to_vote_object(i) for i in rows]
 
 
-    def getProcessed(self):
+    def getProcessed(self, limit, offset):
         c = self.conn.cursor()
         rows = c.execute('''
         SELECT ro.id, ro.blob, ro.sourceUrl, rs.type, rf.format, ro.isProcessed 
@@ -72,11 +72,12 @@ class VoteObjectDao(BaseDao):
             JOIN raw_vote_object_source_type rs
                 ON ro.sourceType = rs.id
             WHERE ro.isProcessed = 1
-        ''')
+            ORDER BY ro.id LIMIT ? OFFSET ?
+        ''', (limit, offset,))
         return [self._map_row_to_vote_object(i) for i in rows]
 
 
-    def getUnprocessed(self):
+    def getUnprocessed(self, limit, offset):
         c = self.conn.cursor()
         rows = c.execute('''
         SELECT ro.id, ro.blob, ro.sourceUrl, rs.type, rf.format, ro.isProcessed 
@@ -86,9 +87,11 @@ class VoteObjectDao(BaseDao):
             JOIN raw_vote_object_source_type rs
                 ON ro.sourceType = rs.id
             WHERE ro.isProcessed = 0
-        ''')
+            ORDER BY ro.id LIMIT ? OFFSET ?
+        ''', (limit, offset,))
 
         return [self._map_row_to_vote_object(i) for i in rows]
+
 
     def isUrlIngested(self, url):
         c = self.conn.cursor()

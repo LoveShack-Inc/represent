@@ -1,0 +1,48 @@
+version: "3"
+services:
+  process:
+    image: repp/repp
+    entrypoint: ""
+    command: repp --process
+    environment:
+      - SQLITE_FILEPATH=/opt/repp/database/sqlitedatabase.db
+    build: 
+      context: .
+    volumes:
+      - sqlite:/opt/repp/database
+  crawl:
+    image: repp/repp
+    entrypoint: ""
+    command: repp --crawl
+    environment:
+      - SQLITE_FILEPATH=/opt/repp/database/sqlitedatabase.db
+    build: 
+      context: .
+    volumes:
+      - sqlite:/opt/repp/database
+  ui: 
+    image: repp/ui
+    build: 
+      context: ./ui
+    ports:
+      - 80:80
+    environment:
+      - NGINX_BASIC_ENABLED
+      - NGINX_BASIC_USER
+      - NGINX_BASIC_PASS
+    volumes:
+      - ./config/nginx.conf:/tmp/nginx.conf
+      - ./config/basic-auth.sh:/docker-entrypoint.d/basic-auth.sh
+  webservice:
+    image: repp/web 
+    command: repp-serve
+    environment:
+      - SQLITE_FILEPATH=/opt/repp/database/sqlitedatabase.db
+    entrypoint: ""
+    build: 
+      context: .
+    volumes:
+      - sqlite:/opt/repp/database
+
+volumes:
+  sqlite:

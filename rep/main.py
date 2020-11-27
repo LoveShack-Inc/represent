@@ -4,6 +4,7 @@ import time
 import sys
 import os
 
+from rep.dao.PagedQueryHelper import iterate_through_paged_query
 from rep.dao.VoteObjectDao import VoteObjectDao
 from rep.crawlers import get_crawlers
 from rep.processors import get_processor_map
@@ -72,8 +73,7 @@ def _run_crawlers():
 
 
 def _run_processors():
-    unprocessed_objects = voteObjectsDao.getUnprocessed()
-    for i in unprocessed_objects:
+    for i in iterate_through_paged_query(voteObjectsDao.getUnprocessed, 1):
         try:
             parser = PARSERS[f"{i.sourceFormat}&&{i.sourceType}"]
             parsed_vote = parser.process_blob(i.blob, i.sourceUrl)

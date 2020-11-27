@@ -117,5 +117,8 @@ def main():
     for route, handler in routes.items():
         cherrypy.tree.mount(handler, route)
 
+    
+    # defaults to localhost only
+    cherrypy.server.socket_host = '0.0.0.0'
     cherrypy.engine.start()
     cherrypy.engine.block()

@@ -22,5 +22,8 @@ FROM nginx:stable-alpine
 
 COPY --from=builder /opt/repp/dist /usr/share/nginx/html
 
+# for creating secrets at container start time if we want
+RUN apk add --no-cache apache2-utils
+
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
