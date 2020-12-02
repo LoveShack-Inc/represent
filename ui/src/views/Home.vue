@@ -1,6 +1,6 @@
 <template>
     <div>
-      <section class="hero is-medium is-primary is-bold">
+      <div class="hero is-medium is-primary is-bold">
         <div class="hero-body">
           <div class="container">
             <h1 class="title">
@@ -11,7 +11,7 @@
             </h2>
           </div>
         </div>
-      </section>
+      </div>
       <div class="repp-process block">
         <b-steps :has-navigation="false" v-model="activeStep">
             <b-step-item label="Campaign" icon=""></b-step-item> 
@@ -93,7 +93,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .repp-process-cols {
   padding-top: 1rem;
   padding-left: 2rem;

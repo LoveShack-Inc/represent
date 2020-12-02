@@ -4,12 +4,13 @@ from os import getenv
 from rep.db import sqlite_get_connection_helper
 
 class SqliteConnector:
-    @classmethod
-    def get_conn(self):
-        return sqlite_get_connection_helper()
-
+    def __init__(self, **kwargs):
+        if 'database' not in kwargs:
+            logging.warning("No database supplied, using default connection")
+        self.conn = kwargs.get('database', sqlite_get_connection_helper())
+    
     def create_db(self):
-        conn = SqliteConnector.get_conn()
+        conn = self.conn 
         c = conn.cursor()
 
         logging.info("Initializg DB")
@@ -44,16 +45,18 @@ class SqliteConnector:
                 billNumber VARCHAR NOT NULL,
                 voteName VARCHAR NOT NULL,
                 repName VARCHAR NOT NULL,
-                repVote VARCHAR NOT NULL
+                repVote VARCHAR NOT NULL,
+                rawVoteObjectId INTEGER NOT NULL,
+                FOREIGN KEY (rawVoteObjectId) REFERENCES raw_vote_object(id),
+                PRIMARY KEY (rawVoteObjectId, repName)
             )
         ''')
 
         conn.commit()
-        conn.close()
         logging.info("DB initialized")
 
     def run_migrations(self):
-        conn = SqliteConnector.get_conn()
+        conn = self.conn
         c = conn.cursor()
 
         logging.info("Running migrations")
@@ -63,5 +66,4 @@ class SqliteConnector:
         ''')
 
         conn.commit()
-        conn.close()
         logging.info("Done running migrations")

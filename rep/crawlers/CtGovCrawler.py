@@ -1,6 +1,8 @@
 import logging
 import requests
 from .BaseCrawler import BaseCrawler
+from rep.dataclasses.VoteObject import VoteObject
+from rep.dataclasses.Enums import SourceType, SourceFormat
 from rep.dao.VoteObjectDao import VoteObjectDao
 from bs4 import BeautifulSoup
 
@@ -28,11 +30,14 @@ class CtGovCrawler(BaseCrawler):
                 continue
             try:
                 logging.info(f"Get pdf {num}/{len(vote_object_urls)}")
-                vote_object = self._download_vote_object(i)
+                blob = self._download_vote_object(i)
             except requests.exceptions.HttpError as e:
                 logging.exception("HTTPError caught when making request to resource server")
                 continue
-            self.voteObjectDao.write(vote_object, i)
+
+            # TODO: store the format and type ints in an enum
+            vote_object = VoteObject(blob=blob, sourceUrl=i, sourceType=SourceType.CT_STATE_GOV.value, sourceFormat=SourceFormat.PDF.value)
+            self.voteObjectDao.write(vote_object)
 
     def _ct_gov_search(self, year):
         data = {

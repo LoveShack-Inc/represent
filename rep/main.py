@@ -9,13 +9,14 @@ from rep.dao.VoteObjectDao import VoteObjectDao
 from rep.crawlers import get_crawlers
 from rep.processors import get_processor_map
 from rep.processors.Exceptions import PdfProcessorException
-from rep.dao.ProcessedVoteRecordDao import ProcessedVoteRecordDao
+from rep.dao.ProcessedVoteResultDao import ProcessedVoteResultDao
 
 SLEEP_MINUTES = 60
 SLEEP_TIME = 60 * SLEEP_MINUTES
 PARSERS = get_processor_map()
 
 voteObjectsDao = VoteObjectDao()
+processedVoteResultDao = ProcessedVoteResultDao()
 
 if os.getenv("ENV", "prod") == "local":
     time.sleep(10)
@@ -76,15 +77,13 @@ def _run_processors():
     for i in iterate_through_paged_query(voteObjectsDao.getUnprocessed, 1):
         try:
             parser = PARSERS[f"{i.sourceFormat}&&{i.sourceType}"]
-            parsed_vote = parser.process_blob(i.blob, i.sourceUrl)
+            parsed_vote = parser.process_blob(i)
             if parsed_vote is not None:
-                processed_vote_record_dao = ProcessedVoteRecordDao()
-                processed_vote_record_dao.write(*parsed_vote)
-                processed_vote_record_dao.mark_processed(i.sourceUrl)
+                processedVoteResultDao.write(parsed_vote)
+                voteObjectsDao.markProcessedBySourceUrl(i.sourceUrl)
                 logging.info('Successfully processed the following file: ' + i.sourceUrl)
             else:
-                processed_vote_record_dao = ProcessedVoteRecordDao()
-                processed_vote_record_dao.mark_processed(i.sourceUrl)
+                voteObjectsDao.markProcessedBySourceUrl(i.sourceUrl)
         except AttributeError as e:
             logging.exception(
                 f"Skipping record. No processor exists for [format={i.sourceFormat}, type={i.sourceType}, url={i.sourceUrl}]"
@@ -93,3 +92,7 @@ def _run_processors():
             logging.exception(
                 f"Skipping record. We failed to process the PDF [format={i.sourceFormat}, type={i.sourceType}, url={i.sourceUrl}]"
             )
+
+# I'm not sure how else to get the debugger to work
+if __name__ == "__main__":
+    main()

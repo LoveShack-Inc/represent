@@ -7,7 +7,7 @@
                 </p>
             </div>
             <div class="card-content">
-                <div class="content">
+                <div>
                     <p>
                         The Repp project periodically gathers data from different official public
                         sources and stores them. Once stored, they are processed and key information
@@ -20,6 +20,7 @@
                 </div>
             </div>
         </div>
+        <hr>
         <repp-vote-record-table></repp-vote-record-table>
     </section>
 </template>
@@ -37,5 +38,3 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
