@@ -15,7 +15,7 @@ setuptools.setup(
     python_requires='>=3.7',
     install_requires=[
         "requests",
-        "PyPDF2",
+        "pdfplumber",
         "certifi",
         "beautifulsoup4",
         "cherrypy",

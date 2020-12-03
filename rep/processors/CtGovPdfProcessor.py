@@ -1,5 +1,5 @@
 import io
-import PyPDF2
+import pdfplumber
 import re
 import sys
 import logging
@@ -31,7 +31,8 @@ class CtGovPdfProcessor(BaseProcessor):
         name_parts = []
         name_match = name_match.split()
         for i in name_match:
-            if not self.NUM_PATTERN.match(i):
+            if not self.NUM_PATTERN.match(i) and i != "VACANT":
+                # big hack
                 name_parts.append(i.upper())
         if len(name_parts) < 1:
             name_parts = ["UNKNOWN"]
@@ -67,11 +68,8 @@ class CtGovPdfProcessor(BaseProcessor):
         )
 
     def _get_page_from_blob(self, blob):
-        fileReader = PyPDF2.PdfFileReader(io.BytesIO(blob))
-        page_content = fileReader.getPage(0).extractText()
-        page_content = page_content.replace('\n', '')
-        page_content += '\n'
-        return page_content
+        with pdfplumber.open(io.BytesIO(blob)) as pdf:
+            return pdf.pages[0].extract_text().replace('\n', '')
 
     def _get_unix_time(self, year, date):
         dt = datetime.datetime(int(year), int(date.split('/')[0]), int(date.split('/')[1]))
