@@ -21,6 +21,8 @@ class CtGovPdfProcessor(BaseProcessor):
         self.VOTE_FOR_PATTERN = r"Vote for\W+([^\s]+)"
         self.NUM_PATTERN = re.compile(r"\d+")
 
+        self.state = 'CT'
+
     def process_blob(self, vote_object: VoteObject) -> ProcessedVoteResult:
         try: 
             return self._process_blob_wrapper(vote_object)

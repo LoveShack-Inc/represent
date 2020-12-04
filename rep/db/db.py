@@ -59,7 +59,6 @@ class SqliteConnector:
                 state VARCHAR NOT NULL,
                 party VARCHAR NULL
             );
-        
         ''')
 
         conn.commit()

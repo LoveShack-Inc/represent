@@ -10,6 +10,7 @@ from rep.crawlers import get_crawlers
 from rep.processors import get_processor_map
 from rep.processors.Exceptions import PdfProcessorException
 from rep.dao.ProcessedVoteResultDao import ProcessedVoteResultDao
+from rep.dao.RepresentativeInfoDao import RepresentativeInfoDao
 
 SLEEP_MINUTES = 60
 SLEEP_TIME = 60 * SLEEP_MINUTES
@@ -17,6 +18,7 @@ PARSERS = get_processor_map()
 
 voteObjectsDao = VoteObjectDao()
 processedVoteResultDao = ProcessedVoteResultDao()
+representativeInfoDao = RepresentativeInfoDao()
 
 if os.getenv("ENV", "prod") == "local":
     time.sleep(10)
@@ -80,6 +82,8 @@ def _run_processors():
             parsed_vote = parser.process_blob(i)
             if parsed_vote is not None:
                 processedVoteResultDao.write(parsed_vote)
+                for name in parsed_vote.repName:
+                    representativeInfoDao.write(name, parser.state)
                 voteObjectsDao.markProcessedBySourceUrl(i.sourceUrl)
                 logging.info('Successfully processed the following file: ' + i.sourceUrl)
             else:
