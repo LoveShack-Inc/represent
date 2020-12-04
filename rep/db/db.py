@@ -49,7 +49,17 @@ class SqliteConnector:
                 rawVoteObjectId INTEGER NOT NULL,
                 FOREIGN KEY (rawVoteObjectId) REFERENCES raw_vote_object(id),
                 PRIMARY KEY (rawVoteObjectId, repName)
-            )
+            );
+        CREATE TABLE IF NOT EXISTS representative_info
+            (
+                id INTEGER NOT NULL PRIMARY KEY,
+                firstName VARCHAR NULL,
+                middleName VARCHAR NULL,
+                lastName VARCHAR NOT NULL,
+                state VARCHAR NOT NULL,
+                party VARCHAR NULL
+            );
+        
         ''')
 
         conn.commit()
