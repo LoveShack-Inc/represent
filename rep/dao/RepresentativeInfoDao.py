@@ -11,21 +11,14 @@ class RepresentativeInfoDao(BaseDao):
             result[0],
             result[1],
             result[2],
-            result[3],
-            result[4]
+            result[3]
         )
 
-    def write(self, name, state):
-        split_name = name.split(' ')
-        if len(split_name) == 1:
-            
-
+    def write(self, representative_info):
 
         c = self.conn.cursor()
         tup = (
-            representative_info.firstName,
-            representative_info.middleName,
-            representative_info.lastName,
+            representative_info.fullName,
             representative_info.state,
             representative_info.party,
         )

@@ -6,8 +6,10 @@ class RepresentativeInfo:
     firstName: str
     middleName: str
     lastName: str
+    fullName: str
     state: str
     party: str
+    
     id: int = field(default=None)
 
     def validate(self):

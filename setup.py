@@ -19,7 +19,8 @@ setuptools.setup(
         "certifi",
         "beautifulsoup4",
         "cherrypy",
-        "pytest"
+        "pytest",
+        "pandas"
     ],
     entry_points = {
         'console_scripts': [

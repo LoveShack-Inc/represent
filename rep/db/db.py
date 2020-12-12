@@ -13,7 +13,7 @@ class SqliteConnector:
         conn = self.conn 
         c = conn.cursor()
 
-        logging.info("Initializg DB")
+        logging.info("Initializing DB")
         c.executescript('''
         CREATE TABLE IF NOT EXISTS raw_vote_object_format
             (
@@ -49,15 +49,6 @@ class SqliteConnector:
                 rawVoteObjectId INTEGER NOT NULL,
                 FOREIGN KEY (rawVoteObjectId) REFERENCES raw_vote_object(id),
                 PRIMARY KEY (rawVoteObjectId, repName)
-            );
-        CREATE TABLE IF NOT EXISTS representative_info
-            (
-                id INTEGER NOT NULL PRIMARY KEY,
-                firstName VARCHAR NULL,
-                middleName VARCHAR NULL,
-                lastName VARCHAR NOT NULL,
-                state VARCHAR NOT NULL,
-                party VARCHAR NULL
             );
         ''')
 

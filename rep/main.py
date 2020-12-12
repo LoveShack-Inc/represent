@@ -1,5 +1,6 @@
 import argparse
 import logging
+from rep.dataclasses.RepresentativeInfo import RepresentativeInfo
 import time
 import sys
 import os
@@ -83,7 +84,13 @@ def _run_processors():
             if parsed_vote is not None:
                 processedVoteResultDao.write(parsed_vote)
                 for name in parsed_vote.repName:
-                    representativeInfoDao.write(name, parser.state)
+                    if len(name.split(' ')) > 1:
+                        representativeInfo = RepresentativeInfo(
+                            name,
+                            parser.state,
+                            ""
+                            )
+                    representativeInfoDao.write(representativeInfo)
                 voteObjectsDao.markProcessedBySourceUrl(i.sourceUrl)
                 logging.info('Successfully processed the following file: ' + i.sourceUrl)
             else:
