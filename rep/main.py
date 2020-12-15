@@ -77,20 +77,18 @@ def _run_crawlers():
 
 
 def _run_processors():
+    # #########
+    # Dalton's workspace, should not be committed
+    representativeInfoDao._get_id_from_name('hi')
+
+
+    # #########
     for i in iterate_through_paged_query(voteObjectsDao.getUnprocessed, 1):
         try:
             parser = PARSERS[f"{i.sourceFormat}&&{i.sourceType}"]
             parsed_vote = parser.process_blob(i)
             if parsed_vote is not None:
                 processedVoteResultDao.write(parsed_vote)
-                for name in parsed_vote.repName:
-                    if len(name.split(' ')) > 1:
-                        representativeInfo = RepresentativeInfo(
-                            name,
-                            parser.state,
-                            ""
-                            )
-                    representativeInfoDao.write(representativeInfo)
                 voteObjectsDao.markProcessedBySourceUrl(i.sourceUrl)
                 logging.info('Successfully processed the following file: ' + i.sourceUrl)
             else:

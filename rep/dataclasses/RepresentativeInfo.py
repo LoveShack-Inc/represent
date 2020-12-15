@@ -3,25 +3,40 @@ from typing import List
 
 @dataclass(frozen=True)
 class RepresentativeInfo:
-    firstName: str
-    middleName: str
-    lastName: str
-    fullName: str
-    state: str
-    party: str
+    dist: str 
+    officeCode: str 
+    districtNumber: str 
+    number: str 
+    designatorCode: str 
+    firstName: str 
+    middleInitial: str 
+    lastName: str 
+    suffix: str 
+    commonlyUsedName: str 
+    homeStreetAddress: str 
+    homeCity: str 
+    homeState: str 
+    homeZipCode: str 
+    homePhone: str 
+    capitolStreetAddress: str 
+    capitolCity: str 
+    capitolPhone: str 
+    room: str 
+    roomNumber: str 
+    committeesChaired: str 
+    committeesViceChaired: str 
+    rankingMember: str 
+    committeeMember1: str 
+    senatorRepresentative: str 
+    party: str 
+    title: str 
+    gender: str 
+    businessPhone: str 
+    email: str 
+    fax: str 
+    prison: str 
+    url: str 
+    committeeCodes: str
     
     id: int = field(default=None)
-
-    def validate(self):
-
-        if (self.lastName == "" 
-            or self.state == ""
-        ): 
-            return False
-        else:
-            return True
-
-    def __post_init__(self):
-        if not self.validate():
-            raise ValueError(f"RepresentativeInfo is invalid:\n\t{self}")
 
