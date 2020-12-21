@@ -55,8 +55,7 @@ class RepresentativeInfoDao(BaseDao):
 
 
     def _get_id_from_name(self, name):
-        rows = self.getAll()
-        representatives = [self._map_result(row) for row in rows]
+        representatives = self.getAll()
         hi = 0
 
 
@@ -65,7 +64,8 @@ class RepresentativeInfoDao(BaseDao):
         c.execute('''SELECT * FROM representative_info;''')
         rows = c.fetchall()
         self.conn.commit()
-        return rows
+        representatives = [self._map_result(row) for row in rows]
+        return representatives
 
     def write(self):
         pass
