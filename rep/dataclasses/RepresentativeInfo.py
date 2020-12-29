@@ -6,7 +6,6 @@ class RepresentativeInfo:
     dist: str 
     officeCode: str 
     districtNumber: str 
-    number: str 
     designatorCode: str 
     firstName: str 
     middleInitial: str 

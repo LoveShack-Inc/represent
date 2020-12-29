@@ -11,19 +11,17 @@ from rep.dao.RepresentativeInfoDao import RepresentativeInfoDao
 def representative_info():
     kwargs = {}
     conn = kwargs.get('database', sqlite_get_connection_helper())
-
     c = conn.cursor()
 
-    logging.info("Initializg Representative Info table...")
+    logging.info("Initializing Representative Info table...")
     c.executescript('''
 
             CREATE TABLE IF NOT EXISTS representative_info
                 (
-                    id INTEGER NOT NULL PRIMARY KEY,
+                    id INTEGER PRIMARY KEY,
                     dist VARCHAR NULL,
                     officeCode VARCHAR NULL,
                     districtNumber VARCHAR NULL,
-                    number VARCHAR NULL,
                     designatorCode VARCHAR NULL,
                     firstName VARCHAR NULL,
                     middleInitial VARCHAR NULL,
@@ -58,18 +56,17 @@ def representative_info():
 
     ''')
 
-    # df = pd.read_csv('database/data/LegislatorDatabase_2020.csv')
-    # df.to_sql('representative_info', conn, if_exists='append', index=False)
+    conn.commit()
+    conn.close()
+
     filename = 'database/data/LegislatorDatabase_2020.csv'
     with open(filename) as csv_file:
         reader = csv.reader(csv_file)
         next(reader)
         for field in reader:
-            c.execute("INSERT INTO representative_info VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", field)
+            representative_info_dao = RepresentativeInfoDao()
+            representative_info_dao.write(representative_info_dao._map_result(field))
 
-    conn.commit()
-    conn.close()
     logging.info("Representative Info table initialized")
 
 representative_info()
-bill_info()

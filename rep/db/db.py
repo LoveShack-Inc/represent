@@ -50,6 +50,44 @@ class SqliteConnector:
                 FOREIGN KEY (rawVoteObjectId) REFERENCES raw_vote_object(id),
                 PRIMARY KEY (rawVoteObjectId, repName)
             );
+
+        CREATE TABLE IF NOT EXISTS representative_info
+            (
+                id INTEGER PRIMARY KEY,
+                dist VARCHAR NULL,
+                officeCode VARCHAR NULL,
+                districtNumber VARCHAR NULL,
+                designatorCode VARCHAR NULL,
+                firstName VARCHAR NULL,
+                middleInitial VARCHAR NULL,
+                lastName VARCHAR NULL,
+                suffix VARCHAR NULL,
+                commonlyUsedName VARCHAR NULL,
+                homeStreetAddress VARCHAR NULL,
+                homeCity VARCHAR NULL,
+                homeState VARCHAR NULL,
+                homeZipCode VARCHAR NULL,
+                homePhone VARCHAR NULL,
+                capitolStreetAddress VARCHAR NULL,
+                capitolCity VARCHAR NULL,
+                capitolPhone VARCHAR NULL,
+                room VARCHAR NULL,
+                roomNumber VARCHAR NULL,
+                committeesChaired VARCHAR NULL,
+                committeesViceChaired VARCHAR NULL,
+                rankingMember VARCHAR NULL,
+                committeeMember1 VARCHAR NULL,
+                senatorRepresentative VARCHAR NULL,
+                party VARCHAR NULL,
+                title VARCHAR NULL,
+                gender VARCHAR NULL,
+                businessPhone VARCHAR NULL,
+                email VARCHAR NULL,
+                fax VARCHAR NULL,
+                prison VARCHAR NULL,
+                url VARCHAR NULL,
+                committeeCodes VARCHAR NULL
+            );
         ''')
 
         conn.commit()
