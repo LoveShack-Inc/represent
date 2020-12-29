@@ -12,7 +12,6 @@ from rep.processors import get_processor_map
 from rep.processors.Exceptions import PdfProcessorException
 from rep.dao.ProcessedVoteResultDao import ProcessedVoteResultDao
 from rep.dao.RepresentativeInfoDao import RepresentativeInfoDao
-from rep.dao.BillInfoDao import BillInfoDao
 
 SLEEP_MINUTES = 60
 SLEEP_TIME = 60 * SLEEP_MINUTES
@@ -21,7 +20,6 @@ PARSERS = get_processor_map()
 voteObjectsDao = VoteObjectDao()
 processedVoteResultDao = ProcessedVoteResultDao()
 representativeInfoDao = RepresentativeInfoDao()
-billInfoDao = BillInfoDao()
 
 if os.getenv("ENV", "prod") == "local":
     time.sleep(10)
@@ -81,7 +79,6 @@ def _run_crawlers():
 def _run_processors():
     # #########
     # Dalton's workspace, should not be merged
-    bills = billInfoDao.getAll()
     representativeInfoDao._get_id_from_name('hi')
 
 
