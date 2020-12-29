@@ -50,7 +50,7 @@ class RepresentativeInfoDao(BaseDao):
             fax=result[30], 
             prison=result[31], 
             url=result[32], 
-            committeeCodes=result[33]
+            committeeCodes=result[33],
             result=[34]
         )
 
