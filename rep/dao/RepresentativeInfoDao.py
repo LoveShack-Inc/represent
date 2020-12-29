@@ -54,7 +54,6 @@ class RepresentativeInfoDao(BaseDao):
 
     def _get_id_from_name(self, name):
         representatives = self.getAll()
-        hi = 0
 
 
     def getAll(self):

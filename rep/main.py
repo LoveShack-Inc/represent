@@ -79,7 +79,6 @@ def _run_crawlers():
 def _run_processors():
     # #########
     # Dalton's workspace, should not be merged
-    representativeInfoDao._get_id_from_name('hi')
 
 
     # #########
