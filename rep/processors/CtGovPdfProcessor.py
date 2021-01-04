@@ -10,6 +10,7 @@ from .Exceptions import PdfProcessorException
 from .BaseProcessor import BaseProcessor
 from rep.dataclasses.ProcessedVoteResult import ProcessedVoteResult
 from rep.dataclasses.VoteObject import VoteObject
+from rep.dao.RepresentativeInfoDao import RepresentativeInfoDao
 
 
 class CtGovPdfProcessor(BaseProcessor):
@@ -47,9 +48,7 @@ class CtGovPdfProcessor(BaseProcessor):
         date_list = re.findall(self.DATE_PATTERN, page_content)
         num_list = re.findall(self.VOTE_FOR_PATTERN, page_content, re.IGNORECASE)
         year = vote_object.sourceUrl.split('/')[3]
-        # Length of the vote list and/or num_list will be 0 (or 1) if the PDF isn't a vote file that we know
-        # how to read
-        if len(votes) <= 1 or len(num_list) <= 0:
+        if len(votes) <= 1:
             raise PdfProcessorException("PDF file can't be read")
 
         vote_list = []
@@ -59,12 +58,17 @@ class CtGovPdfProcessor(BaseProcessor):
             vote_list.append((rep_vote, rep_name))
 
         unix_time = self._get_unix_time(year, date_list[0][1])
+
+        representativeInfoDao = RepresentativeInfoDao()
+        repIds = [representativeInfoDao.get_id_from_name(x[1]) for x in vote_list]
+
+
         # TODO: Give votes a proper title
         return ProcessedVoteResult(
             unixTime=unix_time, 
             billNumber=num_list[0],
             voteName=num_list[0],
-            repName=[x[1] for x in vote_list],
+            repId=repIds,
             repVote=[x[0] for x in vote_list],
             rawVoteObjectId=vote_object.vote_id
         )

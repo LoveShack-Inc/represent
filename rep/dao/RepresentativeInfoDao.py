@@ -16,44 +16,52 @@ class RepresentativeInfoDao(BaseDao):
 
     def _map_result(self, result):
         return RepresentativeInfo(
-            dist=result[0], 
-            officeCode=result[1], 
-            districtNumber=result[2], 
-            designatorCode=result[3], 
-            firstName=result[4], 
-            middleInitial=result[5], 
-            lastName=result[6], 
-            suffix=result[7], 
-            commonlyUsedName=result[8], 
-            homeStreetAddress=result[9], 
-            homeCity=result[10], 
-            homeState=result[11], 
-            homeZipCode=result[12], 
-            homePhone=result[13], 
-            capitolStreetAddress=result[14], 
-            capitolCity=result[15], 
-            capitolPhone=result[16], 
-            room=result[17], 
-            roomNumber=result[18], 
-            committeesChaired=result[19], 
-            committeesViceChaired=result[20], 
-            rankingMember=result[21], 
-            committeeMember1=result[22], 
-            senatorRepresentative=result[23], 
-            party=result[24], 
-            title=result[25], 
-            gender=result[26], 
-            businessPhone=result[27], 
-            email=result[28], 
-            fax=result[29], 
-            prison=result[30], 
-            url=result[31], 
-            committeeCodes=result[32],
+            id=result[0],
+            dist=result[1], 
+            officeCode=result[2], 
+            districtNumber=result[3], 
+            designatorCode=result[4], 
+            firstName=result[5], 
+            middleInitial=result[6], 
+            lastName=result[7], 
+            suffix=result[8], 
+            commonlyUsedName=result[9], 
+            homeStreetAddress=result[10], 
+            homeCity=result[11], 
+            homeState=result[12], 
+            homeZipCode=result[13], 
+            homePhone=result[14], 
+            capitolStreetAddress=result[15], 
+            capitolCity=result[16], 
+            capitolPhone=result[17], 
+            room=result[18], 
+            roomNumber=result[19], 
+            committeesChaired=result[20], 
+            committeesViceChaired=result[21], 
+            rankingMember=result[22], 
+            committeeMember1=result[23], 
+            senatorRepresentative=result[24], 
+            party=result[25], 
+            title=result[26], 
+            gender=result[27], 
+            businessPhone=result[28], 
+            email=result[29], 
+            fax=result[30], 
+            prison=result[31], 
+            url=result[32], 
+            committeeCodes=result[33]
         )
 
 
-    def _get_id_from_name(self, name):
-        representatives = self.getAll()
+    def get_id_from_name(self, name):
+        reps = self.getAll()
+        # I'm not sure if this is the cleanest and most robust way to do name lookups.
+        # It's complicated by the fact that we don't know if we're getting 
+        # full names or just last names. 
+        for rep in reps:
+            if rep.lastName.upper() in name.upper():
+                return rep.id
+        return -1
 
 
     def getAll(self):

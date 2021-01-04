@@ -2,6 +2,8 @@ import sqlite3
 import logging
 from os import getenv
 from rep.db import sqlite_get_connection_helper
+import csv
+from rep.dao.RepresentativeInfoDao import RepresentativeInfoDao
 
 class SqliteConnector:
     def __init__(self, **kwargs):
@@ -48,7 +50,7 @@ class SqliteConnector:
                 repVote VARCHAR NOT NULL,
                 rawVoteObjectId INTEGER NOT NULL,
                 FOREIGN KEY (rawVoteObjectId) REFERENCES raw_vote_object(id),
-                PRIMARY KEY (rawVoteObjectId, repName)
+                PRIMARY KEY (rawVoteObjectId, repId)
             );
 
         CREATE TABLE IF NOT EXISTS representative_info
@@ -91,6 +93,19 @@ class SqliteConnector:
         ''')
 
         conn.commit()
+
+        filename = 'database/data/LegislatorDatabase_2020.csv'
+        with open(filename) as csv_file:
+            reader = csv.reader(csv_file)
+            next(reader)
+            for field in reader:
+                representative_info_dao = RepresentativeInfoDao()
+                # I can't get the auto-incrementing ID to work unless I give
+                # a -1 as the first list entry for the dataclass.
+                # I know this is bad!! But I don't know how else to fix it
+                field.insert(0, -1)
+                representative_info_dao.write(representative_info_dao._map_result(field))
+
         logging.info("DB initialized")
 
     def run_migrations(self):
