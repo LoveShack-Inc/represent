@@ -44,7 +44,7 @@ class SqliteConnector:
                 unixTime INTEGER NOT NULL,
                 billNumber VARCHAR NOT NULL,
                 voteName VARCHAR NOT NULL,
-                repName VARCHAR NOT NULL,
+                repId INTEGER NOT NULL,
                 repVote VARCHAR NOT NULL,
                 rawVoteObjectId INTEGER NOT NULL,
                 FOREIGN KEY (rawVoteObjectId) REFERENCES raw_vote_object(id),
