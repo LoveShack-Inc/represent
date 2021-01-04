@@ -6,16 +6,11 @@ class ProcessedVoteResult:
     unixTime: int
     billNumber: str
     voteName: str
-    repName: List[str]
+    repId: List[int]
     repVote: List[str]
     rawVoteObjectId: int
 
     def validate(self):
-        repNameValid = True
-        for i in self.repName:
-            if i == "":
-                repNameValid = False
-                break
         repVoteValid = True
         for i in self.repVote:
             if i == "":
@@ -24,8 +19,6 @@ class ProcessedVoteResult:
 
         if (self.billNumber == "" 
             or self.voteName == ""
-            or len(self.repName) < 1
-            or repNameValid == False
             or len(self.repVote) < 1
             or repVoteValid == False
         ): 

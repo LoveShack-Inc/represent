@@ -25,13 +25,13 @@ class ProcessedVoteResultDao(BaseDao):
                 processed_vote_result.unixTime,
                 processed_vote_result.billNumber,
                 processed_vote_result.voteName,
-                processed_vote_result.repName[num],
+                processed_vote_result.repId[num],
                 processed_vote_result.repVote[num],
                 processed_vote_result.rawVoteObjectId,
             )
             c.execute('''
                     INSERT OR IGNORE INTO processed_vote_result 
-                        (unixTime, billNumber, voteName, repName, repVote, rawVoteObjectId) 
+                        (unixTime, billNumber, voteName, repId, repVote, rawVoteObjectId) 
                         VALUES 
                         (?, ?, ?, ?, ?, ?);
                     ''', tup)
@@ -53,12 +53,12 @@ class ProcessedVoteResultDao(BaseDao):
         ''', (vote_name,))
         return [self._map_result(i) for i in rows]
 
-    def getByRepName(self, rep_name: str) -> List[ProcessedVoteResult]:
+    def getByRepId(self, rep_name: int) -> List[ProcessedVoteResult]:
         c = self.conn.cursor()
         rows = c.execute(f'''
             SELECT * FROM {self.TABLE_NAME} pvr
-                WHERE pvr.repName = ?
-        ''', (rep_name,))
+                WHERE pvr.repId = ?
+        ''', (rep_id,))
         return [self._map_result(i) for i in rows]
 
     def getByVoteObjectId(self, rep_name: str) -> List[ProcessedVoteResult]:
